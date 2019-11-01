@@ -1,16 +1,21 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
 import { auth } from "./firebase";
+import TodosContainer from "./containers/TodosContainer";
 
 const styles = theme => ({
-  heroContent: {
-    maxWidth: 600,
-    margin: "0 auto",
-    textAlign: "center",
-    padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`
+  layout: {
+    width: "auto",
+    marginLeft: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2,
+    paddingTop: theme.spacing.unit * 5,
+    [theme.breakpoints.up(600 + theme.spacing.unit * 2 * 2)]: {
+      width: 600,
+      marginLeft: "auto",
+      marginRight: "auto"
+    }
   }
 });
 
@@ -23,17 +28,8 @@ class Home extends Component {
     }
 
     return (
-      <main>
-        <div className={classes.heroContent}>
-          <Typography
-            variant="h6"
-            align="center"
-            color="textSecondary"
-            paragraph
-          >
-            Welcome {auth.currentUser.displayName}
-          </Typography>
-        </div>
+      <main className={classes.layout}>
+        <TodosContainer />
       </main>
     );
   }

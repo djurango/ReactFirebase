@@ -1,12 +1,13 @@
 import { createMuiTheme } from "@material-ui/core/styles";
-import pink from "@material-ui/core/colors/pink";
 
 export default createMuiTheme({
   palette: {
     primary: {
-      main: "#0065a3"
+      main: "#039BE5"
     },
-    secondary: pink
+    secondary: {
+      main: "#F57C00"
+    }
   },
   typography: {
     useNextVariants: true
