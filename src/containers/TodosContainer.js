@@ -1,56 +1,58 @@
 import React, { Component } from "react";
-import uuid from "uuid/v4";
 
 import Todos from "../components/Todos";
+import TodosCollection from "../collections/TodosCollection";
+import { db, auth } from "../firebase";
 
 class TodosContainer extends Component {
   state = {
-    todos: [
-      { id: uuid(), text: "Learn Firebase", checked: false },
-      { id: uuid(), text: "Learn React", checked: true }
-    ],
     filterValue: "all"
   };
 
-  handleToggle = ({ id }) => {
-    this.setState(({ todos }) => ({
-      todos: todos.map(todo => {
-        if (todo.id === id) {
-          return { ...todo, checked: !todo.checked };
-        } else {
-          return todo;
-        }
-      })
-    }));
+  handleToggle = todo => {
+    db.collection("todos")
+      .doc(todo.id)
+      .update({
+        checked: !todo.checked
+      });
   };
 
-  handleDelete = ({ id }) => {
-    this.setState(({ todos }) => ({
-      todos: todos.filter(todo => todo.id !== id)
-    }));
+  handleDelete = todo => {
+    db.collection("todos")
+      .doc(todo.id)
+      .delete();
+  };
+
+  handleCreate = text => {
+    db.collection("todos").add({
+      text,
+      checked: false,
+      createdAt: new Date(),
+      userId: auth.currentUser.uid
+    });
   };
 
   handleFilter = filterValue => {
     this.setState({ filterValue });
   };
 
-  handleCreate = text => {
-    this.setState(({ todos }) => ({
-      todos: [...todos, { text, checked: false }]
-    }));
-  };
-
   render() {
-    const { todos, filterValue } = this.state;
+    const { filterValue } = this.state;
 
     return (
-      <Todos
-        todos={todos}
-        filterValue={filterValue}
-        onCreate={this.handleCreate}
-        onToggle={this.handleToggle}
-        onDelete={this.handleDelete}
-        onFilter={this.handleFilter}
+      <TodosCollection
+        renderError={error => <div>{error.message}</div>}
+        render={({ data: todos, isLoading }) => (
+          <Todos
+            todos={todos}
+            filterValue={filterValue}
+            isLoading={isLoading}
+            onCreate={this.handleCreate}
+            onToggle={this.handleToggle}
+            onDelete={this.handleDelete}
+            onFilter={this.handleFilter}
+          />
+        )}
       />
     );
   }
